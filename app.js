@@ -84,13 +84,13 @@ app.post('/api/votes', function(req, res){
   var data = [];
 
   for (var i = 0; i < req.body.length; i++){
-    data[i] = {text: req.body[i].text, vote: req.body[i].vote};
+    data[i] = {text: req.body[i].text, votes: req.body[i].votes};
   }
 
     for (var i = 0; i < data.length; i++) {
       //select in table topics in column text the value with data[i] text
       //replace that row's vote value to data[i].vote
-      client.query('UPDATE topics SET vote=$2 WHERE text=$1',[data[i].text, data[i].vote]);
+      client.query('UPDATE topics SET votes=$2 WHERE text=$1',[data[i].text, data[i].votes]);
     };
     var query = client.query("SELECT text FROM topics ORDER BY id ASC");
     query.on('row', function(row) {
