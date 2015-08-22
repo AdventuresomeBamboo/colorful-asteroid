@@ -2,7 +2,7 @@
 // for querying the database to insert and retrieve topic and vote data
 
 // The project uses a node server with express and a Postgres database to store data
- var express = require('express'),
+var express = require('express'),
 serveStatic = require('serve-static'),
 client = require('./public/models/database'),
 morgan = require('morgan'),
@@ -26,7 +26,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/po
 
 // Request returns an array with all submitted topics
 app.get('/api/topics', function(req, res){
-    var query = client.query('SELECT text, vote FROM topics');
+  var query = client.query('SELECT text, vote FROM topics');
     var rows = []; // Array to hold values returned from database
 
     query.on('row', function(row) {
@@ -35,7 +35,7 @@ app.get('/api/topics', function(req, res){
     query.on('end', function(result) {
       return res.json(rows);
     });
-});
+  });
 
 
 // Posts a submitted topic to the database with a default value of 0 in the vote column
@@ -43,7 +43,7 @@ app.get('/api/topics', function(req, res){
 // querying votes
 app.post('/api/topics', function(req, res){
   var rows = []; // Array to hold values returned from database
-   url.parse(req.url).query
+  url.parse(req.url).query
   // Grab data from http request
   var data = {text: req.body.text};
 
@@ -62,12 +62,11 @@ app.post('/api/topics', function(req, res){
       console.log(result)
       return res.json(rows);
     });
-});
+  });
 
 // Retrives all topics and votes from database, other than those with a vote value of 0. Votes
 // with a value 0 are not user submitted but actually only used in displaying topics.
 app.get('/api/votes', function(req, res){
-  pg.connect(connectionString, function(err, client, done){
     var query = client.query('SELECT text, vote FROM topics WHERE vote > 0');
     var rows = [];
     query.on('row', function(row) {
@@ -76,7 +75,7 @@ app.get('/api/votes', function(req, res){
     query.on('end', function(result) {
       return res.json(rows);
     });
-});
+  });
 
 // Post votes to the database 'vote' column as integers ranging from 1 to 100
 app.post('/api/votes', function(req, res){
@@ -87,7 +86,7 @@ app.post('/api/votes', function(req, res){
     data[i] = {text: req.body[i].text, votes: req.body[i].votes};
   }
 
-    for (var i = 0; i < data.length; i++) {
+  for (var i = 0; i < data.length; i++) {
       //select in table topics in column text the value with data[i] text
       //replace that row's vote value to data[i].vote
       client.query('UPDATE topics SET votes=$2 WHERE text=$1',[data[i].text, data[i].votes]);
@@ -100,12 +99,12 @@ app.post('/api/votes', function(req, res){
     query.on('end', function(result) {
       return res.json(rows);
     });
-});
+  });
 
 // Delete all rows from topics table to reset for a new sprint
 app.post('/api/reset', function(req, res){
-    var query = client.query('DELETE from topics');
-    res.end();
+  var query = client.query('DELETE from topics');
+  res.end();
 });
 
 // Describes the port we're listening on. Go to 'localhost:3000' in browser to serve locally
