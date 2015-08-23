@@ -66,7 +66,7 @@ app.post('/api/topics', function(req, res){
 
 // Retrives all topics and votes from database, other than those with a vote value of 0. Votes
 // with a value 0 are not user submitted but actually only used in displaying topics.
-app.get('/api/votes', function(req, res){
+app.get('/api/vote', function(req, res){
     var query = client.query('SELECT text, votes FROM topics WHERE votes > 0');
     var rows = [];
     query.on('row', function(row) {
@@ -78,7 +78,7 @@ app.get('/api/votes', function(req, res){
   });
 
 // Post votes to the database 'vote' column as integers ranging from 1 to 100
-app.post('/api/votes', function(req, res){
+app.post('/api/vote', function(req, res){
   var rows = [];
   var data = [];
 
