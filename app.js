@@ -51,7 +51,7 @@ app.post('/api/topics', function(req, res){
 
     // Insert topics into table
 
-    client.query('INSERT INTO topics (text, vote) values ($1, $2)', [data.text, 0]);
+    client.query('INSERT INTO topics (text, votes) values ($1, $2)', [data.text, 0]);
 
     // Retrieves inserted values from database
     var query = client.query("SELECT text FROM topics ORDER BY id DESC");
@@ -67,7 +67,7 @@ app.post('/api/topics', function(req, res){
 // Retrives all topics and votes from database, other than those with a vote value of 0. Votes
 // with a value 0 are not user submitted but actually only used in displaying topics.
 app.get('/api/votes', function(req, res){
-    var query = client.query('SELECT text, vote FROM topics WHERE vote > 0');
+    var query = client.query('SELECT text, votes FROM topics WHERE votes > 0');
     var rows = [];
     query.on('row', function(row) {
       rows.push(row);
