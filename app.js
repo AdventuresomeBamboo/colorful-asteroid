@@ -26,7 +26,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/po
 
 // Request returns an array with all submitted topics
 app.get('/api/topics', function(req, res){
-  var query = client.query('SELECT text, votes FROM topics');
+  var query = client.query('SELECT text, vote FROM topics');
     var rows = []; // Array to hold values returned from database
 
     query.on('row', function(row) {
@@ -40,7 +40,7 @@ app.get('/api/topics', function(req, res){
 
 // Posts a submitted topic to the database with a default value of 0 in the vote column
 // These rows with 0 in the vote value are only used to present topics, and not when 
-// querying votes
+// querying vote
 app.post('/api/topics', function(req, res){
   var rows = []; // Array to hold values returned from database
   url.parse(req.url).query
@@ -51,7 +51,7 @@ app.post('/api/topics', function(req, res){
 
     // Insert topics into table
 
-    client.query('INSERT INTO topics (text, votes) values ($1, $2)', [data.text, 0]);
+    client.query('INSERT INTO topics (text, vote) values ($1, $2)', [data.text, 0]);
 
     // Retrieves inserted values from database
     var query = client.query("SELECT text FROM topics ORDER BY id DESC");
@@ -64,10 +64,10 @@ app.post('/api/topics', function(req, res){
     });
   });
 
-// Retrives all topics and votes from database, other than those with a vote value of 0. Votes
+// Retrives all topics and vote from database, other than those with a vote value of 0. vote
 // with a value 0 are not user submitted but actually only used in displaying topics.
 app.get('/api/vote', function(req, res){
-    var query = client.query('SELECT text, votes FROM topics WHERE votes > 0');
+    var query = client.query('SELECT text, vote FROM topics WHERE vote > 0');
     var rows = [];
     query.on('row', function(row) {
       rows.push(row);
@@ -77,19 +77,19 @@ app.get('/api/vote', function(req, res){
     });
   });
 
-// Post votes to the database 'vote' column as integers ranging from 1 to 100
+// Post vote to the database 'vote' column as integers ranging from 1 to 100
 app.post('/api/vote', function(req, res){
   var rows = [];
   var data = [];
 
   for (var i = 0; i < req.body.length; i++){
-    data[i] = {text: req.body[i].text, votes: req.body[i].votes};
+    data[i] = {text: req.body[i].text, vote: req.body[i].vote};
   }
 
   for (var i = 0; i < data.length; i++) {
       //select in table topics in column text the value with data[i] text
       //replace that row's vote value to data[i].vote
-      client.query('UPDATE topics SET votes=$2 WHERE text=$1',[data[i].text, data[i].votes]);
+      client.query('UPDATE topics SET vote=$2 WHERE text=$1',[data[i].text, data[i].vote]);
     };
     var query = client.query("SELECT text FROM topics ORDER BY id ASC");
     query.on('row', function(row) {
