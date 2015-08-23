@@ -26,7 +26,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/po
 
 // Request returns an array with all submitted topics
 app.get('/api/topics', function(req, res){
-  var query = client.query('SELECT text, vote FROM topics');
+  var query = client.query('SELECT text, votes FROM topics');
     var rows = []; // Array to hold values returned from database
 
     query.on('row', function(row) {
