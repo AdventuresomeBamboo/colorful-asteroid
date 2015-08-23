@@ -33,7 +33,7 @@ angular.module('Reflectiv', ['ngRoute'])
 
   topicsList.init();
   
-  // Retrieve the list of already submitted votes when the topics page is accessed
+  // Retrieve the list of already submitted vote when the topics page is accessed
   topicsList.topics = $http.get('/api/topics')
   .then(function(response){ // success function
     topicsList.topics = response.data; // stores topics in topicsList
@@ -87,44 +87,44 @@ angular.module('Reflectiv', ['ngRoute'])
   })
 
 
-.controller('VotesController', function($window, $location, $http, Sprint){ // injects location, http, sprint
-  var votesList = this; // sets scope to votesLIst
+.controller('voteController', function($window, $location, $http, Sprint){ // injects location, http, sprint
+  var voteList = this; // sets scope to voteLIst
 
-  votesList.init = function(){
+  voteList.init = function(){
     if(Sprint.table === undefined){
       Sprint.table = $location.path().slice(7, 18);
     }
   };
 
-  votesList.init();
+  voteList.init();
 
-  votesList.topics = $http.get('/api/topics') // gets topics to vote one
+  voteList.topics = $http.get('/api/topics') // gets topics to vote one
     .then(function(response){ // success function
-      votesList.topics = response.data; // sets votesList variable
+      voteList.topics = response.data; // sets voteList variable
     }, 
     function(response) { // error function
       console.log('you have an error');
     });
 
-    votesList.check = function() {
+    voteList.check = function() {
       // if every returns true, invoke vote();
-      if(votesList.topics.every(checkVotes)){
+      if(voteList.topics.every(checkvote)){
         console.log(Sprint.table)
         vote();
         $location.path('/voted')
       };
       // checks if every topic has been voted on
-      if(!votesList.topics.every(checkVotes)){
-        for(var i = 0; i < votesList.topics; i++){
-          if(votesList.topics[i].vote === 0){
-            $window.alert("You did not vote for : ", votesList.topics[i].text)
+      if(!voteList.topics.every(checkvote)){
+        for(var i = 0; i < voteList.topics; i++){
+          if(voteList.topics[i].vote === 0){
+            $window.alert("You did not vote for : ", voteList.topics[i].text)
           };
         };
       };
     };
 
     var vote = function(){
-        $http.post('/api/votes', votesList.topics) // post vote to db
+        $http.post('/api/vote', voteList.topics) // post vote to db
           .then(function(response) { // success function
             console.log('Vote submitted');
           }, 
@@ -133,7 +133,7 @@ angular.module('Reflectiv', ['ngRoute'])
         });
         };
 
-        var checkVotes = function(currentValue, index, array){
+        var checkvote = function(currentValue, index, array){
           return currentValue.vote > 0;
         };
 
@@ -156,13 +156,13 @@ angular.module('Reflectiv', ['ngRoute'])
     };   
 
 
-  // Retrieve the list of already submitted votes when the topics page is accessed
-  resultsList.results = $http.get('/api/votes')
+  // Retrieve the list of already submitted vote when the topics page is accessed
+  resultsList.results = $http.get('/api/vote')
   .then(function(response){ // success function
     resultsList.results = response.data; // store results in resultsList.results
-    for (var i = 0; i < resultsList.results.length; i++){ // iterate over results to compile votes
+    for (var i = 0; i < resultsList.results.length; i++){ // iterate over results to compile vote
       if (resultsList.obj[resultsList.results[i].text]) { // if vote exists
-        resultsList.obj[resultsList.results[i].text].push(resultsList.results[i].vote); // push new vote onto votes array
+        resultsList.obj[resultsList.results[i].text].push(resultsList.results[i].vote); // push new vote onto vote array
       }
       else {
         resultsList.obj[resultsList.results[i].text] = [resultsList.results[i].vote]; // store the first vote in new array
